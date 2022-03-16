@@ -25,12 +25,12 @@
       let DB = [];
       let uuid = Math.random().toString();
       var ubi = [];
-      setInterval(loadPositions, 3000);
-      setInterval(addMarkers, 3000);
+      setInterval(loadPositions, 10000);
+      setInterval(addMarkers, 10000);
 
       if ("geolocation" in navigator) {
         console.log("location is available");
-        setInterval(searchPosition, 3000);
+        setInterval(searchPosition, 10000);
       } else {
         console.log("geolocation is not available");
       }
