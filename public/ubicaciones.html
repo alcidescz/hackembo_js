@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <title>Test Penguins</title>
+  </head>
+  <body>
+    <div id="map" style="width: 800px; height: 600px"></div>
+
+    <p>Latitud: <span id="latitude"> </span></p>
+    <br />
+    <p>Longitud: <span id="longitude"> </span></p>
+    <br />
+    <script src="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7/leaflet.js"></script>
+
+    <script>
+      var users = [];
+
+      if ("geolocation" in navigator) {
+        var map = L.map("map").setView([-25.2997454, -57.4677962], 11);
+        mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+        L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; " + mapLink + " Contributors",
+          maxZoom: 18,
+        }).addTo(map);
+        setInterval(() => {
+          navigator.geolocation.getCurrentPosition(async (position) => {
+            console.log(position.coords.latitude);
+            const options = {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                lat: position.coords.latitude,
+                lon: position.coords.longitude,
+              }),
+            };
+            const response = await fetch(
+              "/update-location/" + localStorage.getItem("hackemboUUID"),
+              options
+            );
+            console.log(options);
+            const responseJson = await response.json();
+
+            console.log(response, responseJson);
+
+            console.log(responseJson["locations"]["id"]);
+            users = responseJson.locations;
+
+            users?.forEach((user) => {
+              console.log("user", user.lat, user.lon);
+              marker = new L.marker([Number(user.lat), Number(user.lon)])
+                .bindPopup(user.id)
+                .addTo(map);
+            });
+          });
+        }, 1000);
+      } else {
+        console.log("geolocation is not available");
+      }
+
+      async function getLocations() {
+        const response = await fetch("/locations");
+        const json = await response.json();
+        return json.locations;
+      }
+
+      function createLocation() {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          var lat = position.coords.latitude;
+          var lon = position.coords.longitude;
+          document.getElementById("latitude").textContent = lat;
+          document.getElementById("longitude").textContent = lon;
+          const hackemboUUID = localStorage.getItem("hackemboUUID");
+          const data = { lat, lon, uuid: hackemboUUID };
+          const options = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          };
+          const response = await fetch("/connect", options);
+          const responseJson = await response.json();
+          if (responseJson && responseJson.uuid) {
+            localStorage.setItem("hackemboUUID", responseJson.uuid);
+            console.log(responseJson.uuid);
+          }
+        });
+      }
+
+      createLocation();
+
+      //   function mappeo(key, index) {
+      //     console.log("KEY", key);
+      //     console.log("VALUE", DB[key]);
+      //     return { lat: DB[key].lat, lon: DB[key].lon };
+      //   }
+      //   const planes = Object.keys(DB).map(mappeo);
+
+      //   console.log(planes);
+
+      /* for (var i = 0; i < planes.length; i++) {
+        marker = new L.marker([])
+          .bindPopup(planes[i][0])
+          .addTo(map);
+      } */
+    </script>
+  </body>
+</html>

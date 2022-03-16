@@ -1,76 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
     <title>Hackembo Py</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-        #map {
-            width: 100%;
-            height: 100vh;
-        }
+      #map {
+        width: 100%;
+        height: 100vh;
+      }
     </style>
-</head>
-<body>
-    <h1> Bienvenido a e-Mongaru</h1>
-    <p> Latitud: <span id="latitude"> </span></p><br>
-    <p> Longitud: <span id="longitude"> </span></p><br>
-    <button onClick="repetirCada2Segundos()">Buscar Posicion</button>
-    <br>    <br>
+  </head>
+  <body>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        
+
     <script>
+      // Map initialization
+      var map = L.map("map").setView([-25.2885765, -57.6008964], 6);
 
-    // Map initialization 
-    var map = L.map('map').setView([-25.2885765,-57.6008964], 6);
-
-    //osm layer
-    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    });
-    osm.addTo(map);
-    var marker, circle;
-    let intervaloDeTiempo;
-    repetirCada2Segundos();
-    function repetirCada2Segundos(){
+      //osm layer
+      var osm = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      );
+      osm.addTo(map);
+      var marker, circle;
+      let intervaloDeTiempo;
+      repetirCada2Segundos();
+      function repetirCada2Segundos() {
         intervaloDeTiempo = setInterval(buscarPosition, 5000);
-    }
+      }
 
-    if ('geolocation' in navigator){
-        console.log('geolocation esta disponible');
-        function buscarPosition(){
-            navigator.geolocation.getCurrentPosition(async position => {
+      if ("geolocation" in navigator) {
+        console.log("geolocation esta disponible");
+        function buscarPosition() {
+          navigator.geolocation.getCurrentPosition(async (position) => {
             console.log(position.coords);
             var lat = position.coords.latitude;
             var lon = position.coords.longitude;
             var accuracy = position.coords.accuracy;
-            document.getElementById('latitude').textContent = lat;
-            document.getElementById('longitude').textContent = lon;
-            const data = {lat, lon};
+            document.getElementById("latitude").textContent = lat;
+            document.getElementById("longitude").textContent = lon;
+            const data = { lat, lon };
             const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
             };
-            const response = await fetch('/api', options);
+            const response = await fetch("/api", options);
             const json = await response.json();
-            console.log(json); 
-            if(marker) {
-                map.removeLayer(marker)
+            console.log(json);
+            if (marker) {
+              map.removeLayer(marker);
             }
 
-            if(circle) {
-                map.removeLayer(circle)
+            if (circle) {
+              map.removeLayer(circle);
             }
 
             // const myResults = [data] //aca guardaria iterando los data que deveulve el server
@@ -80,20 +81,26 @@
             // circle = L.circle([lat, lon], {radius: accuracy})
             // })
 
-            marker = L.marker([lat, lon]) //markers
-            circle = L.circle([lat, lon], {radius: accuracy})
+            marker = L.marker([lat, lon]); //markers
+            circle = L.circle([lat, lon], { radius: accuracy });
 
-            var featureGroup = L.featureGroup([marker, circle]).addTo(map)
+            var featureGroup = L.featureGroup([marker, circle]).addTo(map);
 
-            map.fitBounds(featureGroup.getBounds())
+            map.fitBounds(featureGroup.getBounds());
 
-            console.log("Your coordinate is: Lat: "+ lat +" Long: "+ lon+ " Accuracy: "+ accuracy)
-            });}
-    } else {
-        console.log('geolocation no esta disponible');
-    }   
-
+            console.log(
+              "Your coordinate is: Lat: " +
+                lat +
+                " Long: " +
+                lon +
+                " Accuracy: " +
+                accuracy
+            );
+          });
+        }
+      } else {
+        console.log("geolocation no esta disponible");
+      }
     </script>
-    
-</body>
+  </body>
 </html>

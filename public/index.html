@@ -1,51 +1,71 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <!--
 	Eventually by HTML5 UP
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
 <html>
-	<head>
-		<title>Inicio | e_Mongaru</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="/css/main.css" />
-	</head>
-	<body class="is-preload">
+  <head>
+    <title>Inicio | e_Mongaru</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body class="is-preload">
+    <!-- Header -->
+    <header id="header">
+      <h1>¡e-mongarú! 🤌</h1>
+      <p>
+        Te damos la bienvenida a la comunidad de viajeros <br />
+        unidos de transporte público en Asunción y Gran Asunción.
+      </p>
+    </header>
 
-		<!-- Header -->
-			<header id="header">
-				<h1>¡e-mongarú! 🤌 </h1>
-				<p>Te damos la bienvenida a la comunidad de viajeros <br />
-					unidos de transporte público en Asunción y Gran Asunción. 
-			</header>
+    <!-- Signup Form -->
+    <form id="signup-form" method="post" onClick="myFunction()">
+      <!-- <input type="email" name="email" id="email" placeholder="Email Address" /> -->
+      <input type="submit" value="Estoy en el bus" />
+      <input type="submit" value="Ver Mapa" />
+      <input type="submit" value="Finalizar viaje" />
+    </form>
 
-		<!-- Signup Form -->
-			<form id="signup-form" method="post" onClick="myFunction()">
-				<!-- <input type="email" name="email" id="email" placeholder="Email Address" /> -->
-				<input type="submit" value="Iniciar viaje" />
-				<input type="submit" value="Ver Mapa" />
-				<input type="submit" value="Finalizar viaje" />
-			</form>
+    <!-- Footer -->
+    <footer id="footer">
+      <ul class="icons">
+        <li>
+          <a href="#" class="icon brands fa-facebook"
+            ><span class="label">Twitter</span></a
+          >
+        </li>
+        <li>
+          <a href="#" class="icon brands fa-instagram"
+            ><span class="label">Instagram</span></a
+          >
+        </li>
+        <li>
+          <a href="#" class="icon fa-envelope"
+            ><span class="label">Email</span></a
+          >
+        </li>
+      </ul>
+      <ul class="copyright">
+        <li>&copy; Todos los derechos reservados. Los izquierdos, tal vez.</li>
+        <li>
+          Hecho con 💖 en Paraguay
+          <a href="https://hackembofinal.herokuapp.com"> - Hack_embO</a>
+        </li>
+      </ul>
+    </footer>
 
-		<!-- Footer -->
-			<footer id="footer">
-				<ul class="icons">
-					<li><a href="#" class="icon brands fa-facebook"><span class="label">Twitter</span></a></li>
-					<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-					<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
-				</ul>
-				<ul class="copyright">
-					<li>&copy; Todos los derechos reservados. Los izquierdos, tal vez.</li><li>Hecho con 💖 en Paraguay  <a href="https://hackembofinal.herokuapp.com"> - Hack_embO</a></li>
-				</ul>
-			</footer>
-
-		<!-- Scripts -->
-			<script src="/js/main.js"></script>
-			<script>
-			function myFunction() {
-         		window.location.href="mapa.html";  }
-			</script>
-
-	</body>
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    <script>
+      function myFunction() {
+        window.location.href = "ubicaciones.html";
+      }
+    </script>
+  </body>
 </html>
