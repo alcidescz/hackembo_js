@@ -21,12 +21,26 @@ app.post("/api", (request, response) => {
   });
 });
 
-let DB = [{}];
+
+let DB = {};
 
 app.post("/nueva", (req, res) => {
-  let uuid = Math.random().toString();
-  DB.push({ id: uuid, lat: req.body.lat, lon: req.body.lon });
-  res.send({ uuid, lat: req.body.lat, lon: req.body.lon });
+  DB[req.body.uuid] = { lat: req.body.lat, lon: req.body.lon };
+  res.sendStatus(200);
+});
+
+app.get("/nueva", (req, res) => {
+  function mapping(key, index) {
+    console.log("KEY", key);
+    console.log("VALUE", DB[key]);
+    console.log(DB[key]["lat"]);
+    console.log(DB[key]["lon"]);
+    return { lat: DB[key].lat, lon: DB[key].lon, id: key };
+  }
+
+  const listOfLocations = Object.keys(DB).map(mapping);
+
+  res.send(listOfLocations);
 });
 
 app.put("/update-location/:id", (req, res) => {
@@ -56,16 +70,6 @@ app.get("/locations", (req, res) => {
   });
 });
 
-// function mapping(key, index) {
-//   console.log("KEY", key);
-//   console.log("VALUE", DB[key]);
-//   return { lat: DB[key].lat, lon: DB[key].lon, id: key };
-// }
-
-//const listOfLocations = Object.keys(DB).map(mapping);
-
-//res.send(listOfLocations);
-// Start the server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

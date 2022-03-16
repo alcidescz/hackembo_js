@@ -12,75 +12,53 @@
     <title>Test Penguins</title>
   </head>
   <body>
-    <div id="map" style="width: 800px; height: 600px"></div>
+    <div id="map" style="width: 600px; height: 400px"></div>
+
+    <script src="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7/leaflet.js"></script>
 
     <p>Latitud: <span id="latitude"> </span></p>
     <br />
     <p>Longitud: <span id="longitude"> </span></p>
     <br />
-    <script src="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7/leaflet.js"></script>
 
     <script>
-      var users = [];
+      let DB = [];
+      let uuid = Math.random().toString();
+      var ubi = [];
+      setInterval(loadPositions, 3000);
+      setInterval(addMarkers, 3000);
 
       if ("geolocation" in navigator) {
-        var map = L.map("map").setView([-25.2997454, -57.4677962], 11);
-        mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
-        L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "&copy; " + mapLink + " Contributors",
-          maxZoom: 18,
-        }).addTo(map);
-        setInterval(() => {
-          navigator.geolocation.getCurrentPosition(async (position) => {
-            console.log(position.coords.latitude);
-            const options = {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                lat: position.coords.latitude,
-                lon: position.coords.longitude,
-              }),
-            };
-            const response = await fetch(
-              "/update-location/" + localStorage.getItem("hackemboUUID"),
-              options
-            );
-            console.log(options);
-            const responseJson = await response.json();
-
-            console.log(response, responseJson);
-
-            console.log(responseJson["locations"]["id"]);
-            users = responseJson.locations;
-
-            users?.forEach((user) => {
-              console.log("user", user.lat, user.lon);
-              marker = new L.marker([Number(user.lat), Number(user.lon)])
-                .bindPopup(user.id)
-                .addTo(map);
-            });
-          });
-        }, 1000);
+        console.log("location is available");
+        setInterval(searchPosition, 3000);
       } else {
         console.log("geolocation is not available");
       }
 
-      async function getLocations() {
-        const response = await fetch("/locations");
+      async function loadPositions() {
+        const response = await fetch("/nueva");
         const json = await response.json();
-        return json.locations;
+        console.log(json);
+        //console.log(lista);
+        // //listOfLocations = DB;
+        // console.log(listOfLocationsLat);
+        // console.log(listOfLocationsLon);
+        json.forEach(createMarker);
+        function createMarker(json) {
+          var planes = [json.id, json.lat, json.lon];
+          //console.log(planes);
+          //console.log(planes[0]);
+          ubi.push([planes[0], planes[1], planes[2]]);
+        }
       }
 
-      function createLocation() {
+      function searchPosition() {
         navigator.geolocation.getCurrentPosition(async (position) => {
           var lat = position.coords.latitude;
           var lon = position.coords.longitude;
           document.getElementById("latitude").textContent = lat;
           document.getElementById("longitude").textContent = lon;
-          const hackemboUUID = localStorage.getItem("hackemboUUID");
-          const data = { lat, lon, uuid: hackemboUUID };
+          const data = { uuid, lat, lon };
           const options = {
             method: "POST",
             headers: {
@@ -88,31 +66,25 @@
             },
             body: JSON.stringify(data),
           };
-          const response = await fetch("/connect", options);
-          const responseJson = await response.json();
-          if (responseJson && responseJson.uuid) {
-            localStorage.setItem("hackemboUUID", responseJson.uuid);
-            console.log(responseJson.uuid);
-          }
+          fetch("/nueva", options);
         });
       }
+      console.log(ubi);
+      var map = L.map("map").setView([-25.2997454, -57.4677962], 11);
+      mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+      L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; " + mapLink + " Contributors",
+        maxZoom: 18,
+      }).addTo(map);
 
-      createLocation();
-
-      //   function mappeo(key, index) {
-      //     console.log("KEY", key);
-      //     console.log("VALUE", DB[key]);
-      //     return { lat: DB[key].lat, lon: DB[key].lon };
-      //   }
-      //   const planes = Object.keys(DB).map(mappeo);
-
-      //   console.log(planes);
-
-      /* for (var i = 0; i < planes.length; i++) {
-        marker = new L.marker([])
-          .bindPopup(planes[i][0])
-          .addTo(map);
-      } */
+      function addMarkers() {
+        console.log(ubi);
+        for (var i = 0; i < ubi.length; i++) {
+          console.log("HOLA");
+          console.log(ubi[i]);
+            marker = new L.marker([ubi[i][1], ubi[i][2]]).addTo(map);
+            marker = setLatLng([ubi[i][1], ubi[i][2]])
+      }}
     </script>
   </body>
 </html>
