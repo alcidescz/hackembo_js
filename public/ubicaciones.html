@@ -25,8 +25,10 @@
       let DB = [];
       let uuid = Math.random().toString();
       var ubi = [];
+      let listOfMarkers = [];
+      
+
       setInterval(loadPositions, 10000);
-      setInterval(addMarkers, 10000);
 
       if ("geolocation" in navigator) {
         console.log("location is available");
@@ -37,18 +39,20 @@
 
       async function loadPositions() {
         const response = await fetch("/nueva");
-        const json = await response.json();
-        console.log(json);
-        //console.log(lista);
-        // //listOfLocations = DB;
-        // console.log(listOfLocationsLat);
-        // console.log(listOfLocationsLon);
-        json.forEach(createMarker);
-        function createMarker(json) {
-          var planes = [json.id, json.lat, json.lon];
-          //console.log(planes);
-          //console.log(planes[0]);
-          ubi.push([planes[0], planes[1], planes[2]]);
+        const locations = await response.json();
+
+        listOfMarkers.forEach(removeMarker);
+        function removeMarker(marker) {
+        map.removeLayer(marker);
+        }
+
+        listOfMarkers = []
+
+        locations.forEach(createMarker);
+        function createMarker(location) {
+          var planes = [location.id, location.lat, location.lon];
+          marker = new L.marker([location.lat, location.lon]).addTo(map);
+          listOfMarkers.push(marker)
         }
       }
 
@@ -76,15 +80,6 @@
         attribution: "&copy; " + mapLink + " Contributors",
         maxZoom: 18,
       }).addTo(map);
-
-      function addMarkers() {
-        console.log(ubi);
-        for (var i = 0; i < ubi.length; i++) {
-          console.log("HOLA");
-          console.log(ubi[i]);
-            marker = new L.marker([ubi[i][1], ubi[i][2]]).addTo(map);
-            marker = setLatLng([ubi[i][1], ubi[i][2]])
-      }}
     </script>
   </body>
 </html>
